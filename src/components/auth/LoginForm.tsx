@@ -563,11 +563,25 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     }
   };
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto p-4 bg-white rounded shadow">
-      <h2 className="text-xl font-semibold text-center">Sign In</h2>
+    <form
+    onSubmit={handleSubmit}
+    className="space-y-6 max-w-md mx-auto p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl shadow-lg backdrop-blur-sm animate__animated animate__fadeInUp"
+    aria-label="Sign In Form"
+  >
+    <h2 className="text-2xl font-bold text-gray-800 text-center">Sign In to Meta E Bid</h2>
 
-      {error && <div className="bg-red-100 text-red-600 p-3 rounded">{error}</div>}
+    {error && (
+      <div
+        className="flex items-center bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 animate__animated animate__shakeX"
+        role="alert"
+        aria-describedby="error-message"
+      >
+        <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+        <span id="error-message">{error}</span>
+      </div>
+    )}
 
+    <div>
       <Input
         label="Email"
         type="email"
@@ -575,8 +589,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
+        className="bg-white/80 backdrop-blur-sm border-cyan-300 focus:border-cyan-500 focus:ring-cyan-500 rounded-lg transition-all duration-300"
+        aria-required="true"
+        aria-label="Email address"
       />
+    </div>
 
+    <div>
       <Input
         label="Password"
         type="password"
@@ -584,13 +603,34 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
+        className="bg-white/80 backdrop-blur-sm border-cyan-300 focus:border-cyan-500 focus:ring-cyan-500 rounded-lg transition-all duration-300"
+        aria-required="true"
+        aria-label="Password"
       />
+    </div>
 
-      <Button type="submit" variant="primary" fullWidth isLoading={isLoading}>
-        <LogIn className="h-4 w-4 mr-2" />
-        Sign In
-      </Button>
-    </form>
+    <div className="flex justify-end">
+      <a
+        href="/forgot-password"
+        className="text-sm text-cyan-600 hover:text-cyan-700 hover:underline transition-colors duration-200"
+        aria-label="Forgot your password?"
+      >
+        Forgot Password?
+      </a>
+    </div>
+
+    <Button
+      type="submit"
+      variant="primary"
+      fullWidth
+      isLoading={isLoading}
+      className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 hover:scale-105 hover:brightness-110 shadow-lg transition-all duration-300 rounded-lg"
+      aria-label="Sign in to your account"
+    >
+      <LogIn className="h-4 w-4 mr-2" />
+      Sign In
+    </Button>
+  </form>
   );
 };
 
