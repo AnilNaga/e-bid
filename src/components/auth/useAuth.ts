@@ -29,6 +29,10 @@ export function useAdminAuth() {
       setAdmins(JSON.parse(storedAdmin));
     }
   }, []);
+  useEffect(()=>{
+    console.log("1111111111111111111111111111111",admins)
+    console.log("1111111111111111111111111111111",admins)
+  })
 
   const isLoggedIn = !!admins;
 
@@ -52,6 +56,11 @@ export function useAuth() {
     }
   }, []);
 
+  useEffect(()=>{
+    console.log("1111111111111111111111111111111",{user})
+    console.log("1111111111111111111111111111111",{user})
+  })
+
   const isLoggedIn = !!user;
 
   const logout = () => {
@@ -61,4 +70,7 @@ export function useAuth() {
   };
 
   return { user, isLoggedIn, logout };
+
+  
 }
+

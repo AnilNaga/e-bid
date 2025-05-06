@@ -1,22 +1,69 @@
 // src/components/auth/ProtectedRoute.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../components/auth/useAuth';
-import { useAdminAuth } from '../components/auth/useAuth';
 
 interface ProtectedRouteProps {
   children: JSX.Element;
-  allowedRoles: string[]; // 'ADMIN' or 'USER'
+  onlyAdmin?: boolean;
+  onlyUser?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const { user } = useAuth();
-  const { admins } = useAdminAuth();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, onlyAdmin, onlyUser }) => {
+  const [user, setUser] = useState<any>(null);
+  const [admin, setAdmin] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const role = admins?.role || user?.role;
 
-  if (!role || !allowedRoles.includes(role)) {
-    return <Navigate to="/login" replace />;
+
+  const [admn,setadmn]=useState()
+  useEffect(() => {
+    const storedUser = localStorage.getItem('userData');
+    const storedAdmin = localStorage.getItem('adminData');
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
+    if (storedAdmin) {
+        setadmn(JSON.parse(storedAdmin));
+        console.log("admmmmmmmmmmmmmmmmmmmmmmmmmmm",admn,{admn})
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('userData');
+    const storedAdmin = localStorage.getItem('adminData');
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+     
+    }
+
+    if (storedAdmin) {
+      setAdmin(JSON.parse(storedAdmin));
+      
+    }
+
+    setLoading(false); // mark done loading
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // optional spinner
+  }
+
+  // Redirect if no one is logged in
+  if (!user && !admin) {
+    return <Navigate to="/" replace />;
+  }
+
+  // Admin-only route check
+  if (onlyAdmin && !admin) {
+    return <Navigate to="/not-authorized" replace />;
+  }
+
+  // User-only route check
+  if (onlyUser && !user) {
+    return <Navigate to="/not-authorized" replace />;
   }
 
   return children;
