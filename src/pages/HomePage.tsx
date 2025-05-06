@@ -2501,6 +2501,7 @@
 // };
 
 // export default HomePage;
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, DollarSign, Award, TrendingUp, Mail, Phone, MapPin, ChevronDown, ChevronUp, Package } from 'lucide-react';
@@ -2731,7 +2732,7 @@ const HomePage: React.FC = () => {
                           pathname: `/auction/${auction.id}`,
                           state: { auction }
                         }}
-                        className="block bg-blue-500/80 backdrop-blur-sm rounded-lg p-4 mb-3 hover:bg-blue-600/90 transition-colors animate__animated animate__fadeInUp"
+                        className="block bg-blue-110/80 backdrop-blur-sm rounded-lg p-4 mb-3 hover:bg-blue-600/90 transition-colors animate__animated animate__fadeInUp"
                         style={{ animationDelay: `${index * 0.1}s` }}
                       >
                         <div className="flex justify-between items-start">

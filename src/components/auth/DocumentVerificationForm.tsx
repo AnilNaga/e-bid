@@ -400,13 +400,14 @@
 // };
 
 // export default DocumentVerificationForm; 
+
 import React, { useEffect, useState } from 'react';
 
 interface UserData {
   id: string;
   name: string;
   email: string;
-  [key: string]: any; // For additional user data
+  [key: string]: any;
 }
 
 const DocumentVerificationForm: React.FC = () => {
@@ -419,6 +420,7 @@ const DocumentVerificationForm: React.FC = () => {
   });
   const [errors, setErrors] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [isUserInfoOpen, setIsUserInfoOpen] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("userData");
@@ -436,12 +438,11 @@ const DocumentVerificationForm: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, docType: string) => {
     const { files } = e.target;
     if (files && files[0]) {
-      // Rename file to include document type
       const originalFile = files[0];
       const fileExtension = originalFile.name.split('.').pop() || '';
       const newFileName = `${docType}.${fileExtension}`;
       const renamedFile = new File([originalFile], newFileName, { type: originalFile.type });
-      
+
       setFormData(prev => ({ ...prev, [docType]: renamedFile }));
     }
   };
@@ -457,7 +458,6 @@ const DocumentVerificationForm: React.FC = () => {
     }
 
     const data = new FormData();
-    // Append each file to the 'files' part
     if (formData.businessRegistration) data.append('files', formData.businessRegistration);
     if (formData.taxCertificate) data.append('files', formData.taxCertificate);
     if (formData.bankStatement) data.append('files', formData.bankStatement);
@@ -479,103 +479,116 @@ const DocumentVerificationForm: React.FC = () => {
       setErrors(err.message);
     }
   };
+
   const handleChangeHome = () => {
     window.location.href = '/';
-  }
+  };
+
+  const uploadedCount = Object.values(formData).filter(file => file !== null).length;
+  const totalDocs = 4;
+  const progressPercentage = (uploadedCount / totalDocs) * 100;
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Document Verification</h2>
+    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-teal-50 py-8">
+      <div className="max-w-2xl mx-auto p-6 bg-white rounded-md shadow-md border border-gray-200">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Document Verification</h2>
 
-      {/* Display User Data */}
-      {userData && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-md">
-          <h3 className="text-lg font-semibold mb-2">User Information</h3>
-          <p><strong>ID:</strong> {userData.id}</p>
-          {/* <p><strong>Name:</strong> {userData.name}</p> */}
-          <p><strong>Email:</strong> {userData.email}</p>
-          {Object.entries(userData).map(([key, value]) => (
-            key !== 'id' && key !== 'name' && key !== 'email' && (
-              <p key={key}><strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong> {value}</p>
-            )
+        <div className="mb-4">
+          <div className="flex justify-between text-sm text-gray-600 mb-1">
+            <span>Progress: {uploadedCount}/{totalDocs} documents uploaded</span>
+            <span>{progressPercentage}%</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className="bg-teal-500 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${progressPercentage}%` }}
+            ></div>
+          </div>
+        </div>
+
+        {userData && (
+          <div className="mb-4">
+            <button
+              type="button"
+              onClick={() => setIsUserInfoOpen(!isUserInfoOpen)}
+              className="w-full flex justify-between items-center p-3 bg-gray-100 rounded-md text-gray-900 text-sm font-semibold hover:bg-gray-200"
+            >
+              <span>User Information</span>
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${isUserInfoOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div
+              className={`overflow-hidden transition-all duration-300 ${isUserInfoOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+            >
+              <div className="p-4 bg-gray-50 rounded-md border border-gray-300 mt-2 shadow-sm">
+                <p className="text-sm text-gray-700"><strong>ID:</strong> {userData.id}</p>
+                <p className="text-sm text-gray-700"><strong>Email:</strong> {userData.email}</p>
+                {Object.entries(userData).map(([key, value]) => (
+                  key !== 'id' && key !== 'name' && key !== 'email' && (
+                    <p key={key} className="text-sm text-gray-700"><strong>{key}:</strong> {value}</p>
+                  )
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div aria-live="polite">
+          {errors && <p className="text-sm text-red-600 mb-4 font-medium">{errors}</p>}
+          {success && <p className="text-sm text-green-600 mb-4 font-medium">Documents submitted successfully!</p>}
+        </div>
+
+        <div className="space-y-4">
+          {[
+            { name: 'businessRegistration', label: 'Business Registration Document' },
+            { name: 'taxCertificate', label: 'Tax Certificate' },
+            { name: 'bankStatement', label: 'Bank Statement' },
+            { name: 'idProof', label: 'ID Proof' },
+          ].map(({ name, label }) => (
+            <div key={name} className="bg-blue-50 p-4 rounded-md border border-blue-200 shadow-sm">
+              <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+                {label}
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="file"
+                  id={name}
+                  name={name}
+                  accept=".pdf,.jpg,.png"
+                  onChange={(e) => handleChange(e, name)}
+                  required
+                  className="block flex-1 text-sm text-gray-800 border border-blue-300 rounded-md p-2 bg-white hover:border-blue-500 focus:border-blue-600 focus:outline-none"
+                />
+              </div>
+              {formData[name as keyof typeof formData] && (
+                <p className="text-sm text-gray-600 mt-1">Selected: {formData[name as keyof typeof formData]?.name}</p>
+              )}
+            </div>
           ))}
+
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="flex-1 bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 active:bg-teal-800 shadow-sm"
+            >
+              Submit Documents
+            </button>
+            <button
+              type="button"
+              onClick={handleChangeHome}
+              className="flex-1 bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 active:bg-gray-700 shadow-sm"
+            >
+              Verify Later
+            </button>
+          </div>
         </div>
-      )}
-
-      {errors && <p className="text-red-500 mb-4">{errors}</p>}
-      {success && <p className="text-green-600 mb-4">Documents submitted successfully!</p>}
-
-      <div className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Business Registration Document
-          </label>
-          <input
-            type="file"
-            name="businessRegistration"
-            accept=".pdf,.jpg,.png"
-            onChange={(e) => handleChange(e, 'businessRegistration')}
-            required
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Tax Certificate
-          </label>
-          <input
-            type="file"
-            name="taxCertificate"
-            accept=".pdf,.jpg,.png"
-            onChange={(e) => handleChange(e, 'taxCertificate')}
-            required
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Bank Statement
-          </label>
-          <input
-            type="file"
-            name="bankStatement"
-            accept=".pdf,.jpg,.png"
-            onChange={(e) => handleChange(e as React.ChangeEvent<HTMLInputElement>, 'bankStatement')}
-            required
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            ID Proof
-          </label>
-          <input
-            type="file"
-            name="idProof"
-            accept=".pdf,.jpg,.png"
-            onChange={(e) => handleChange(e as React.ChangeEvent<HTMLInputElement>, 'idProof')}
-            required
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-          />
-        </div>
-
-        <button
-          type="button"
-          onClick={handleSubmit}
-          className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Submit Documents
-        </button>
-        <button
-          type="button"
-          onClick={handleChangeHome}
-          className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Verify Later
-        </button>
       </div>
     </div>
   );

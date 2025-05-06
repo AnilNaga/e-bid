@@ -1,31 +1,25 @@
-// import React from 'react';
-// import { Navigate, Outlet } from 'react-router-dom';
-// import { useAuth } from '../context/AuthContext';
+// src/components/auth/ProtectedRoute.tsx
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../components/auth/useAuth';
+import { useAdminAuth } from '../components/auth/useAuth';
 
-// interface ProtectedRouteProps {
-//   role: 'user' | 'admin';
-//   children?: React.ReactNode;
-// }
+interface ProtectedRouteProps {
+  children: JSX.Element;
+  allowedRoles: string[]; // 'ADMIN' or 'USER'
+}
 
-// const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ role, children }) => {
-//   const { isAuthenticated, isAdmin } = useAuth();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
+  const { user } = useAuth();
+  const { admins } = useAdminAuth();
 
-//   if (!isAuthenticated) {
-//     // Redirect to login page if user is not authenticated
-//     return <Navigate to="/login" />;
-//   }
+  const role = admins?.role || user?.role;
 
-//   if (role === 'admin' && !isAdmin) {
-//     // Redirect to home page if user is not an admin
-//     return <Navigate to="/" />;
-//   }
+  if (!role || !allowedRoles.includes(role)) {
+    return <Navigate to="/login" replace />;
+  }
 
-//   if (role === 'user' && isAdmin) {
-//     // Redirect to home page if an admin tries to access user routes
-//     return <Navigate to="/admin" />;
-//   }
+  return children;
+};
 
-//   return children ? <>{children}</> : <Outlet />;
-// };
-
-// export default ProtectedRoute;
+export default ProtectedRoute;

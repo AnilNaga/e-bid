@@ -431,145 +431,141 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
 
   return (
     <form
-      onSubmit={handleSubmit}
-      className="space-y-6 max-w-md mx-auto p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl shadow-lg backdrop-blur-sm border border-blue-100 animate__animated animate__fadeInUp"
-      aria-label="Registration Form"
+  onSubmit={handleSubmit}
+  className="space-y-6 max-w-md mx-auto p-6 bg-gray-200 border border-gray-300 rounded-md shadow-sm"
+  aria-label="Registration Form"
+>
+  <h2 className="text-xl font-semibold text-gray-800 text-center mb-4">
+    Create Your Account
+  </h2>
+
+  {error && (
+    <div
+      className="flex items-center bg-red-50 text-red-600 px-4 py-3 rounded-md text-sm"
+      role="alert"
+      aria-describedby="error-message"
     >
-      <h2 className="text-2xl font-bold text-gray-800 text-center">Create Your Meta E Auction Account</h2>
+      <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+      <span id="error-message">{error}</span>
+    </div>
+  )}
 
-      {error && (
-        <div
-          className="flex items-center bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 animate__animated animate__shakeX"
-          role="alert"
-          aria-describedby="error-message"
-        >
-          <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-          <span id="error-message">{error}</span>
-        </div>
-      )}
+  {/* Full Name */}
+  <div>
+    <label htmlFor="name" className="block text-sm font-medium text-gray-600 mb-1">
+      Full Name
+    </label>
+    <Input
+      type="text"
+      name="name"
+      placeholder="John Doe"
+      value={formData.name}
+      onChange={handleChange}
+      required
+      className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 placeholder-gray-400"
+    />
+  </div>
 
-      <div className="group focus-within:ring-2 focus-within:ring-cyan-500 rounded-lg transition-all duration-300">
-        <Input
-          label="Full Name"
-          type="text"
-          name="name"
-          placeholder="Your full name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          className="bg-white/80 backdrop-blur-sm border-cyan-300 focus:border-cyan-500 focus:ring-0 rounded-lg transition-all duration-300 group-focus-within:border-cyan-500"
-          aria-required="true"
-          aria-label="Full name"
-        />
-      </div>
+  {/* Email */}
+  <div>
+    <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-1">
+      Email
+    </label>
+    <Input
+      type="email"
+      name="email"
+      placeholder="you@example.com"
+      value={formData.email}
+      onChange={handleChange}
+      required
+      className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 placeholder-gray-400"
+    />
+    {emailError && <p className="text-sm text-red-600 mt-1">{emailError}</p>}
+  </div>
 
-      <div className="group focus-within:ring-2 focus-within:ring-cyan-500 rounded-lg transition-all duration-300">
-        <Input
-          label="Email"
-          type="email"
-          name="email"
-          placeholder="Enter your email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className="bg-white/80 backdrop-blur-sm border-cyan-300 focus:border-cyan-500 focus:ring-0 rounded-lg transition-all duration-300 group-focus-within:border-cyan-500"
-          aria-required="true"
-          aria-label="Email address"
-        />
-        {emailError && (
-          <div className="mt-1 text-sm text-red-600" role="alert">
-            {emailError}
-          </div>
-        )}
-      </div>
+  {/* Password */}
+  <div className="relative">
+    <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-1">
+      Password
+    </label>
+    <Input
+      type={showPassword ? "text" : "password"}
+      name="password"
+      placeholder="Create a strong password"
+      value={formData.password}
+      onChange={handleChange}
+      required
+      className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 placeholder-gray-400"
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute top-9 right-3 text-gray-500"
+      aria-label={showPassword ? "Hide password" : "Show password"}
+    >
+      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+    </button>
+    {formData.password && (
+      <p className="text-sm mt-1 text-gray-600">
+        Strength: <span className="font-medium">{passwordStrength.strength}</span>
+      </p>
+    )}
+  </div>
 
-      <div className="relative group focus-within:ring-2 focus-within:ring-cyan-500 rounded-lg transition-all duration-300">
-        <Input
-          label="Password"
-          type={showPassword ? 'text' : 'password'}
-          name="password"
-          placeholder="Create a password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          className="bg-white/80 backdrop-blur-sm border-cyan-300 focus:border-cyan-500 focus:ring-0 rounded-lg transition-all duration-300 group-focus-within:border-cyan-500"
-          aria-required="true"
-          aria-label="Password"
-        />
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-cyan-600 transition-colors duration-200"
-          aria-label={showPassword ? 'Hide password' : 'Show password'}
-        >
-          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-        </button>
-        {formData.password && (
-          <div className="mt-1 text-sm">
-            Password Strength: <span className={passwordStrength.color}>{passwordStrength.strength}</span>
-          </div>
-        )}
-      </div>
+  {/* Confirm Password */}
+  <div className="relative">
+    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-600 mb-1">
+      Confirm Password
+    </label>
+    <Input
+      type={showConfirmPassword ? "text" : "password"}
+      name="confirmPassword"
+      placeholder="Repeat your password"
+      value={formData.confirmPassword}
+      onChange={handleChange}
+      required
+      className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 placeholder-gray-400"
+    />
+    <button
+      type="button"
+      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+      className="absolute top-9 right-3 text-gray-500"
+      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+    >
+      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+    </button>
+  </div>
 
-      <div className="relative group focus-within:ring-2 focus-within:ring-cyan-500 rounded-lg transition-all duration-300">
-        <Input
-          label="Confirm Password"
-          type={showConfirmPassword ? 'text' : 'password'}
-          name="confirmPassword"
-          placeholder="Confirm your password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-          className="bg-white/80 backdrop-blur-sm border-cyan-300 focus:border-cyan-500 focus:ring-0 rounded-lg transition-all duration-300 group-focus-within:border-cyan-500"
-          aria-required="true"
-          aria-label="Confirm password"
-        />
-        <button
-          type="button"
-          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-cyan-600 transition-colors duration-200"
-          aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
-        >
-          {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-        </button>
-      </div>
+  {/* Terms Checkbox */}
+  <div className="flex items-start space-x-2">
+    <input
+      id="terms"
+      name="terms"
+      type="checkbox"
+      className="mt-0.5 h-4 w-4 text-blue-500 border-gray-300 rounded cursor-pointer"
+      required
+      checked={formData.terms}
+      onChange={handleChange}
+    />
+    <label htmlFor="terms" className="text-sm text-gray-600">
+      I agree to the{" "}
+      <a href="#" className="text-blue-500 underline">Terms</a> and{" "}
+      <a href="#" className="text-blue-500 underline">Privacy Policy</a>
+    </label>
+  </div>
 
-      <div className="flex items-start">
-        <input
-          id="terms"
-          name="terms"
-          type="checkbox"
-          className="h-4 w-4 text-cyan-600 border-cyan-300 rounded mt-1 focus:ring-cyan-500"
-          required
-          checked={formData.terms}
-          onChange={handleChange}
-          aria-required="true"
-          aria-label="Agree to terms and privacy policy"
-        />
-        <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-          I agree to the{' '}
-          <a href="#" className="text-cyan-600 hover:text-cyan-700 hover:underline transition-colors duration-200">
-            Terms
-          </a>{' '}
-          and{' '}
-          <a href="#" className="text-cyan-600 hover:text-cyan-700 hover:underline transition-colors duration-200">
-            Privacy Policy
-          </a>
-        </label>
-      </div>
-
-      <Button
-        type="submit"
-        variant="primary"
-        fullWidth
-        isLoading={isLoading}
-        className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 hover:scale-105 hover:brightness-110 shadow-lg transition-all duration-300 rounded-lg text-lg"
-        aria-label="Create your account"
-      >
-        <UserPlus className="h-4 w-4 mr-2" />
-        Create Account
-      </Button>
-    </form>
+  {/* Submit Button */}
+  <Button
+    type="submit"
+    variant="primary"
+    fullWidth
+    isLoading={isLoading}
+    className="w-full bg-blue-500 text-white font-medium py-2.5 px-6 rounded-md shadow-sm"
+  >
+    <UserPlus className="h-5 w-5 mr-2" />
+    Create Account
+  </Button>
+</form>
   );
 };
 
