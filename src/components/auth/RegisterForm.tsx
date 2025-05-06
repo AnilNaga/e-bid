@@ -435,7 +435,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
       className="space-y-6 max-w-md mx-auto p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl shadow-lg backdrop-blur-sm border border-blue-100 animate__animated animate__fadeInUp"
       aria-label="Registration Form"
     >
-      <h2 className="text-2xl font-bold text-gray-800 text-center">Create Your Meta E Bid Account</h2>
+      <h2 className="text-2xl font-bold text-gray-800 text-center">Create Your Meta E Auction Account</h2>
 
       {error && (
         <div
